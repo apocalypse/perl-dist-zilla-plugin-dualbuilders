@@ -69,13 +69,13 @@ Dist::Zilla::Plugin::DualBuilders - Allows use of Module::Build and ExtUtils::Ma
 
 =head1 DESCRIPTION
 
-This plugin allows you to specify ModuleBuild and Makemaker in your L<Dist::Zilla> F<dist.ini> and select
+This plugin allows you to specify ModuleBuild and MakeMaker in your L<Dist::Zilla> F<dist.ini> and select
 only one as your prereq. Normally, if this plugin is not loaded you will end up with both in your prereq list
 and this is obviously not what you want!
 
 	# In your dist.ini:
 	[ModuleBuild]
-	[Makemaker]
+	[MakeMaker] ; or [MakeMaker::Awesome], will work too :)
 	[DualBuilders] ; needs to be specified *AFTER* the builders
 
 This plugin accepts the following options:
@@ -85,6 +85,8 @@ This plugin accepts the following options:
 =item * prefer
 
 Sets your preferred builder. This builder will be the one added to the prereqs. Valid options are: "make" or "build".
+
+The default is: build
 
 =back
 
