@@ -3,7 +3,7 @@ use strict; use warnings;
 our $VERSION = '0.01';
 
 use Moose;
-with    'Dist::Zilla::Role::PrereqSource';
+with	'Dist::Zilla::Role::PrereqSource';
 
 # -- attributes
 
@@ -53,7 +53,7 @@ sub register_prereqs {
 	} elsif ( ! exists $config_hash{'ExtUtils::MakeMaker'} and ! exists $config_hash{'Module::Build'} ) {
 		$self->log_fatal( 'Detected no builders loaded, please check your dist.ini!' );
 	} else {
-		# Our preference matched the builder
+		# Our preference matched the builder loaded
 	}
 }
 
