@@ -29,8 +29,8 @@ sub register_prereqs {
 	# Find out if we have both builders loaded?
 	my $config_prereq = $self->zilla->prereq->_guts->{configure}{requires};
 	my $build_prereq = $self->zilla->prereq->_guts->{build}{requires};
-	my %config_hash = $config_prereq->as_string_hash;
-	if ( exists $config_hash{'Module::Build'} and exists $config_hash{'ExtUtils::MakeMaker'} ) {
+	my $config_hash = defined $config_prereq ? $config_prereq->as_string_hash : {};
+	if ( exists $config_hash->{'Module::Build'} and exists $config_hash->{'ExtUtils::MakeMaker'} ) {
 		# conflict!
 		if ( $self->prefer eq 'build' ) {
 			# Get rid of EUMM stuff
@@ -46,11 +46,11 @@ sub register_prereqs {
 			$build_prereq->clear_requirement( 'Module::Build' );
 			$self->log_debug( 'Preferring "make", removing Module::Build from prereqs' );
 		}
-	} elsif ( exists $config_hash{'Module::Build'} and $self->prefer eq 'make' ) {
+	} elsif ( exists $config_hash->{'Module::Build'} and $self->prefer eq 'make' ) {
 		$self->log_fatal( 'Detected Module::Build in the config but you preferred ExtUtils::MakeMaker!' );
-	} elsif ( exists $config_hash{'ExtUtils::MakeMaker'} and $self->prefer eq 'build' ) {
+	} elsif ( exists $config_hash->{'ExtUtils::MakeMaker'} and $self->prefer eq 'build' ) {
 		$self->log_fatal( 'Detected ExtUtils::MakeMaker in the config but you preferred Module::Build!' );
-	} elsif ( ! exists $config_hash{'ExtUtils::MakeMaker'} and ! exists $config_hash{'Module::Build'} ) {
+	} elsif ( ! exists $config_hash->{'ExtUtils::MakeMaker'} and ! exists $config_hash->{'Module::Build'} ) {
 		$self->log_fatal( 'Detected no builders loaded, please check your dist.ini!' );
 	} else {
 		# Our preference matched the builder loaded
