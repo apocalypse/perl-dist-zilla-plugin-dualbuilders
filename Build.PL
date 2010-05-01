@@ -19,12 +19,15 @@ my $build = Module::Build->new(
 
 	'test_files'		=> 't/*.t',
 
-	'requires'		=> {
+	'build_requires'	=> {
 		# Test stuff
 		'Test::More'				=> '0.94',
+	},
 
+	'requires'		=> {
 		# To use Dzil
 		'Dist::Zilla::Role::PrereqSource'	=> '2.101170',
+		'Dist::Zilla::Role::InstallTool'	=> '2.101170',
 		'Moose'					=> '1.01',
 		'Moose::Util::TypeConstraints'		=> '1.01',
 

@@ -1,14 +1,17 @@
 package Dist::Zilla::Plugin::DualBuilders;
 use strict; use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
-use Moose;
-with	'Dist::Zilla::Role::PrereqSource';
+use Moose 1.01;
 
-# -- attributes
+# TODO wait for improved Moose that allows "with 'Foo::Bar' => { -version => 1.23 };"
+use Dist::Zilla::Role::PrereqSource 2.101170;
+use Dist::Zilla::Role::InstallTool 2.101170;
+with 'Dist::Zilla::Role::PrereqSource';
+with 'Dist::Zilla::Role::InstallTool';
 
 {
-	use Moose::Util::TypeConstraints;
+	use Moose::Util::TypeConstraints 1.01;
 
 	enum 'myprefer' => qw( build make );
 
@@ -21,9 +24,47 @@ with	'Dist::Zilla::Role::PrereqSource';
 	no Moose::Util::TypeConstraints;
 }
 
-# -- public methods
+has _buildver => (
+	is => 'rw',
+	isa => 'Str',
+);
+
+has _makever => (
+	is => 'rw',
+	isa => 'Str',
+);
+
+sub setup_installer {
+	my ($self, $file) = @_;
+
+	# This is to munge the files
+	foreach my $file ( @{ $self->zilla->files } ) {
+		if ( $file->name eq 'Build.PL' ) {
+			if ( $self->prefer eq 'make' ) {
+				$self->log_debug( "Munging Build.PL because we preferred ExtUtils::MakeMaker" );
+				my $content = $file->content;
+				$content =~ s/'ExtUtils::MakeMaker'\s+=>\s+'.+'/'Module::Build' => '${\$self->_buildver}'/g;
+
+				# TODO do we need to add it to build_requires too? Or is config_requires and the use line sufficient?
+
+				$file->content( $content );
+			}
+		} elsif ( $file->name eq 'Makefile.PL' ) {
+			if ( $self->prefer eq 'build' ) {
+				$self->log_debug( "Munging Makefile.PL because we preferred Module::Build" );
+				my $content = $file->content;
+				$content =~ s/'Module::Build'\s+=>\s+'.+'/'ExtUtils::MakeMaker' => '${\$self->_makever}'/g;
+
+				# TODO since MB adds to build_requires, should we remove EUMM from it? I think it's ok to leave it in...
+
+				$file->content( $content );
+			}
+		}
+	}
+}
 
 sub register_prereqs {
+	## no critic ( ProhibitAccessOfPrivateData )
 	my ($self) = @_;
 
 	# Find out if we have both builders loaded?
@@ -34,14 +75,16 @@ sub register_prereqs {
 		# conflict!
 		if ( $self->prefer eq 'build' ) {
 			# Get rid of EUMM stuff
+			$self->_makever( $config_hash->{'ExtUtils::MakeMaker'} );
 
-			# As of DZIL 2.101170 DZ:P:Makemaker adds to configure only
+			# As of DZIL v2.101170 DZ:P:Makemaker adds to configure only
 			$config_prereq->clear_requirement( 'ExtUtils::MakeMaker' );
 			$self->log_debug( 'Preferring "build", removing ExtUtils::MakeMaker from prereqs' );
 		} elsif ( $self->prefer eq 'make' ) {
 			# Get rid of MB stuff
+			$self->_buildver( $config_hash->{'Module::Build'} );
 
-			# As of DZIL 2.101170 DZ:P:ModuleBuild adds to configure and build
+			# As of DZIL v2.101170 DZ:P:ModuleBuild adds to configure and build
 			$config_prereq->clear_requirement( 'Module::Build' );
 			$build_prereq->clear_requirement( 'Module::Build' );
 			$self->log_debug( 'Preferring "make", removing Module::Build from prereqs' );
@@ -62,6 +105,8 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 =pod
+
+=for stopwords AnnoCPAN CPAN CPANTS Kwalitee MakeMaker ModuleBuild RT dist dzil prereq prereqs
 
 =head1 NAME
 

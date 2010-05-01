@@ -1,5 +1,9 @@
 Revision history for Dist::Zilla::Plugin::DualBuilders
 
+* 0.02
+
+	Ah, I forgot to munge the Makefile.PL/Build.PL to contain the proper builder...
+
 * 0.01
 
 	initial release
