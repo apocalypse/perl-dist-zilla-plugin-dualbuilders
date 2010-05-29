@@ -1,23 +1,21 @@
 package Dist::Zilla::Plugin::DualBuilders;
 use strict; use warnings;
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Moose 1.01;
 
 # TODO wait for improved Moose that allows "with 'Foo::Bar' => { -version => 1.23 };"
-use Dist::Zilla::Role::PrereqSource 2.101170;
-use Dist::Zilla::Role::InstallTool 2.101170;
+use Dist::Zilla::Role::PrereqSource 3.101461;
+use Dist::Zilla::Role::InstallTool 3.101461;
 with 'Dist::Zilla::Role::PrereqSource';
 with 'Dist::Zilla::Role::InstallTool';
 
 {
 	use Moose::Util::TypeConstraints 1.01;
 
-	enum 'myprefer' => qw( build make );
-
 	has prefer => (
 		is => 'ro',
-		isa => 'myprefer',
+		isa => enum( [ qw( build make ) ] ),
 		default => 'build',
 	);
 
@@ -68,8 +66,8 @@ sub register_prereqs {
 	my ($self) = @_;
 
 	# Find out if we have both builders loaded?
-	my $config_prereq = $self->zilla->prereq->_guts->{configure}{requires};
-	my $build_prereq = $self->zilla->prereq->_guts->{build}{requires};
+	my $config_prereq = $self->zilla->prereqs->requirements_for( 'configure', 'requires' );
+	my $build_prereq = $self->zilla->prereqs->requirements_for( 'build', 'requires' );
 	my $config_hash = defined $config_prereq ? $config_prereq->as_string_hash : {};
 	if ( exists $config_hash->{'Module::Build'} and exists $config_hash->{'ExtUtils::MakeMaker'} ) {
 		# conflict!

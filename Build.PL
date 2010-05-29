@@ -25,8 +25,8 @@ my $build = Module::Build->new(
 
 	'requires'		=> {
 		# To use Dzil
-		'Dist::Zilla::Role::PrereqSource'	=> '2.101170',
-		'Dist::Zilla::Role::InstallTool'	=> '2.101170',
+		'Dist::Zilla::Role::PrereqSource'	=> '3.101461',
+		'Dist::Zilla::Role::InstallTool'	=> '3.101461',
 		'Moose'					=> '1.01',
 		'Moose::Util::TypeConstraints'		=> '1.01',
 
