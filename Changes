@@ -1,13 +1,18 @@
 Revision history for Dist::Zilla::Plugin::DualBuilders
 
-* 0.03
+{{$NEXT}}
+
+	Converted to Dist::Zilla for the release process!
+	Tweaked some POD/error messages for clarity
+
+0.03
 
 	Update the prereq logic to work with Dist::Zilla's migration to CPAN META v2
 
-* 0.02
+0.02
 
 	Ah, I forgot to munge the Makefile.PL/Build.PL to contain the proper builder...
 
-* 0.01
+0.01
 
 	initial release
