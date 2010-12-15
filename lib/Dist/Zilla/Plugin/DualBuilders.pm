@@ -6,6 +6,7 @@ use Moose 1.03;
 
 with 'Dist::Zilla::Role::PrereqSource' => { -version => '3.101461' };
 with 'Dist::Zilla::Role::InstallTool' => { -version => '3.101461' };
+with 'Dist::Zilla::Role::AfterBuild' => { -version => '3.101461' };
 
 =attr prefer
 
@@ -26,6 +27,21 @@ The default is: build
 
 	no Moose::Util::TypeConstraints;
 }
+
+=attr block_test
+
+This is a boolean value determining if we will block both testers from running the testsuite. If you have both
+builders loaded, you will run the testsuite twice! If you want this behavior, please set this value to false.
+
+The default is: true
+
+=cut
+
+has block_test => (
+	is => 'ro',
+	isa => 'Bool',
+	default => 1,
+);
 
 has _buildver => (
 	is => 'rw',
@@ -103,6 +119,37 @@ sub register_prereqs {
 	}
 }
 
+sub after_build {
+        my( $self, $root ) = @_;
+
+        return if ! $self->block_test;
+
+	# The builders have done their job, now we block them from running the testsuite twice!
+	my $testers = $self->zilla->plugins_with(-TestRunner);
+		foreach my $t ( @$testers ) {
+		if ( $t =~ /MakeMaker/ and $self->prefer eq 'build' ) {
+			$self->log_debug( 'Blocking ExtUtils::MakeMaker from running the testsuite' );
+			$self->_remove_tester( $t );
+		} elsif ( $t =~ /ModuleBuild/ and $self->prefer eq 'make' ) {
+			$self->log_debug( 'Blocking Module::Build from running the testsuite' );
+			$self->_remove_tester( $t );
+		}
+	}
+}
+
+sub _remove_tester {
+	my( $self, $tester ) = @_;
+
+	# TODO RJBS will kill me! What's a better way to do this?
+	my $plugins = $self->zilla->plugins;
+	foreach my $i ( 0 .. $#{ $plugins } ) {
+		if ( $plugins->[$i] == $tester ) {
+			splice( @$plugins, $i, 1 );
+			last;
+		}
+	}
+}
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
@@ -111,13 +158,13 @@ __PACKAGE__->meta->make_immutable;
 
 =for stopwords MakeMaker ModuleBuild dist dzil prereq prereqs
 
-=for Pod::Coverage register_prereqs setup_installer
+=for Pod::Coverage register_prereqs setup_installer after_build
 
 =head1 DESCRIPTION
 
 This plugin allows you to specify ModuleBuild and MakeMaker in your L<Dist::Zilla> F<dist.ini> and select
 only one as your prereq. Normally, if this plugin is not loaded you will end up with both in your prereq list
-and this is obviously not what you want!
+and this is obviously not what you want! Also, this will block both builders from running the testsuite twice.
 
 	# In your dist.ini:
 	[ModuleBuild]
