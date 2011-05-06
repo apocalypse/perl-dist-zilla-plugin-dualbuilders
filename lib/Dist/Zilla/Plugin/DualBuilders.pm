@@ -2,6 +2,8 @@ package Dist::Zilla::Plugin::DualBuilders;
 
 # ABSTRACT: Allows use of Module::Build and ExtUtils::MakeMaker in a dzil dist
 
+# TODO add support for Module::Build::Tiny? :)
+
 use Moose 1.03;
 
 with 'Dist::Zilla::Role::PrereqSource' => { -version => '3.101461' };
