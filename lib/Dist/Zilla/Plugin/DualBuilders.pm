@@ -54,7 +54,7 @@ has _makever => (
 );
 
 sub setup_installer {
-	my ($self, $file) = @_;
+	my $self = shift;
 
 	# This is to munge the files
 	foreach my $file ( @{ $self->zilla->files } ) {
@@ -120,7 +120,7 @@ sub register_prereqs {
 }
 
 sub after_build {
-        my( $self, $root ) = @_;
+        my $self = shift;
 
         return if ! $self->block_test;
 
