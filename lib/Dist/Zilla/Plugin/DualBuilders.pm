@@ -166,9 +166,7 @@ __PACKAGE__->meta->make_immutable;
 
 While this plugin still works, it did not work cleanly for everyone and it's preferred for you to pick one builder and stick with it! The latest
 toolchain updates have ensured that modern Perls are able to handle either builder. Therefore there is no longer the need to include both
-F<Build.PL> and F<Makefile.PL> in the dist. If you want to provide support for older Perls, please use:
-
-	L<Dist::Zilla::Plugin::MakeMaker::Fallback>
+F<Build.PL> and F<Makefile.PL> in the dist. If you want to provide support for older Perls, please use L<Dist::Zilla::Plugin::MakeMaker::Fallback>.
 
 =head2 OLD POD
 
