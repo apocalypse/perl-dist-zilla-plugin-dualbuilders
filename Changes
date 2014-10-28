@@ -2,6 +2,13 @@ Revision history for Dist::Zilla::Plugin::DualBuilders
 
 {{$NEXT}}
 
+	***DEPRECATED***
+
+		This module had a nice run, but modern Perls with newer toolchains are able to handle this in a saner way :)
+		If you need to support older Perls, please use Dist::Zilla::Plugin::MakeMaker::Fallback instead ( thanks ETHER! )
+
+	***DEPRECATED***
+
 1.001	2010-12-15 18:54:27 UTC
 
 	Add the ability to block both builders from running the testsuite twice

@@ -1,8 +1,6 @@
 package Dist::Zilla::Plugin::DualBuilders;
 
-# ABSTRACT: Allows use of Module::Build and ExtUtils::MakeMaker in a dzil dist
-
-# TODO add support for Module::Build::Tiny? :)
+# ABSTRACT: (DEPRECATED) Allows use of Module::Build and ExtUtils::MakeMaker in a dzil dist
 
 use Moose 1.03;
 
@@ -164,6 +162,16 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 DESCRIPTION
 
+***DEPRECATED***
+
+While this plugin still works, it did not work cleanly for everyone and it's preferred for you to pick one builder and stick with it! The latest
+toolchain updates have ensured that modern Perls are able to handle either builder. Therefore there is no longer the need to include both
+F<Build.PL> and F<Makefile.PL> in the dist. If you want to provide support for older Perls, please use:
+
+	L<Dist::Zilla::Plugin::MakeMaker::Fallback>
+
+=head2 OLD POD
+
 This plugin allows you to specify ModuleBuild and MakeMaker in your L<Dist::Zilla> F<dist.ini> and select
 only one as your prereq. Normally, if this plugin is not loaded you will end up with both in your prereq list
 and this is obviously not what you want! Also, this will block both builders from running the testsuite twice.
@@ -175,5 +183,6 @@ and this is obviously not what you want! Also, this will block both builders fro
 
 =head1 SEE ALSO
 Dist::Zilla
+Dist::Zilla::Plugin::MakeMaker::Fallback
 
 =cut
