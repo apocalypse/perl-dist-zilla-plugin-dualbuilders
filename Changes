@@ -2,6 +2,8 @@ Revision history for Dist::Zilla::Plugin::DualBuilders
 
 {{$NEXT}}
 
+1.002	2014-10-28 18:20:31 UTC
+
 	***DEPRECATED***
 
 		This module had a nice run, but modern Perls with newer toolchains are able to handle this in a saner way :)
